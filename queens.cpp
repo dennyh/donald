@@ -4,17 +4,20 @@
 #include <gecode/minimodel.hh>
 
 using namespace Gecode;
+
 class Queens: public Script {
 public:
   //The postion of the queens on the boards
   IntVarArray q;
   int n;
+    
   //n x n with allowed values 0 & 1
-  Queens(const SizeOption& opt) : Script(opt), q(*this, opt.size() * opt.size(),0,1){
+  Queens(const SizeOptions& opt) : Script(opt), q(*this, opt.size() * opt.size(), 0, 1){
     n = opt.size();
 
     //Matrix rep of the board.
     Matrix<IntVarArray> m(q, opt.size(), opt.size());
+      
     // n is the total number of queens (count)
     count(*this, q, 1, IRT_EQ, n);
 
