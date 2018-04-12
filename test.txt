@@ -1,0 +1,8 @@
+modify the branching function with these and copy and paste
+the result of that as a comment on the code.
+
+branch(*this, q, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
+
+branch(*this, q, INT_VAR_RND(rand()), INT_VAL_RND(rand()));
+
+branch(*this, q, INT_VAR_RND(rand()), INT_VAL_MAX());
