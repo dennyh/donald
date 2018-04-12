@@ -1,0 +1,31 @@
+queens.cpp
+queens.cpp(13): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+queens.cpp(13): error C2143: syntax error: missing ',' before '&'
+queens.cpp(13): error C2065: 'opt': undeclared identifier
+queens.cpp(13): error C2228: left of '.size' must have class/struct/union
+queens.cpp(13): note: type is 'unknown-type'
+queens.cpp(13): error C2664: 'Gecode::IntVarArray::IntVarArray(Gecode::Space &,int,const Gecode::IntSet &)': cannot convert argument 3 from 'int' to 'const Gecode::IntSet &'
+queens.cpp(13): note: Reason: cannot convert from 'int' to 'const Gecode::IntSet'
+queens.cpp(13): note: Constructor for class 'Gecode::IntSet' is declared 'explicit'
+queens.cpp(14): error C2065: 'opt': undeclared identifier
+queens.cpp(14): error C2228: left of '.size' must have class/struct/union
+queens.cpp(14): note: type is 'unknown-type'
+queens.cpp(17): error C2065: 'opt': undeclared identifier
+queens.cpp(17): error C2228: left of '.size' must have class/struct/union
+queens.cpp(17): note: type is 'unknown-type'
+queens.cpp(17): error C2664: 'Gecode::Matrix<Gecode::IntVarArray>::Matrix(Gecode::Matrix<Gecode::IntVarArray> &&)': cannot convert argument 1 from 'Gecode::IntVarArray' to 'const Gecode::Matrix<Gecode::IntVarArray> &'
+queens.cpp(17): note: Reason: cannot convert from 'Gecode::IntVarArray' to 'const Gecode::Matrix<Gecode::IntVarArray>'
+queens.cpp(17): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+queens.cpp(107): error C2661: 'Gecode::Driver::ScriptBase<Gecode::Driver::IgnoreStepOption<Gecode::Space>>::ScriptBase': no overloaded function takes 2 arguments
+queens.cpp(108): error C2660: 'Gecode::VarArray<Gecode::IntVar>::update': function does not take 3 arguments
+queens.cpp(113): error C2259: 'Queens': cannot instantiate abstract class
+queens.cpp(113): note: due to following members:
+queens.cpp(113): note: 'Gecode::Space *Gecode::Space::copy(void)': is abstract
+C:\Program Files\Gecode\\include\gecode/kernel/core.hpp(1944): note: see declaration of 'Gecode::Space::copy'
+queens.cpp
+queens.cpp(110): error C2661: 'Gecode::Driver::ScriptBase<Gecode::Driver::IgnoreStepOption<Gecode::Space>>::ScriptBase': no overloaded function takes 2 arguments
+queens.cpp(111): error C2660: 'Gecode::VarArray<Gecode::IntVar>::update': function does not take 3 arguments
+queens.cpp(116): error C2259: 'Queens': cannot instantiate abstract class
+queens.cpp(116): note: due to following members:
+queens.cpp(116): note: 'Gecode::Space *Gecode::Space::copy(void)': is abstract
+C:\Program Files\Gecode\\include\gecode/kernel/core.hpp(1944): note: see declaration of 'Gecode::Space::copy'
