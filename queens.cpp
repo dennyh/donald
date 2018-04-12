@@ -7,32 +7,33 @@ using namespace Gecode;
 
 class Queens: public Script {
 public:
-  //The postion of the queens on the boards
-  IntVarArray q;
-  int n;
-    
-  //n x n with allowed values 0 & 1
-  Queens(const SizeOptions& opt) : Script(opt), q(*this, opt.size() * opt.size(), 0, 1){
-    n = opt.size();
+    //The postion of the queens on the boards
+    IntVarArray q;
+    int n;
+    //n x n with allowed values 0 & 1
+    Queens(const SizeOptions& opt) : Script(opt), q(*this, opt.size() * opt.size(), 0, 1) {
+        n = opt.size();
+        
+        //Matrix rep of the board.
+        Matrix<IntVarArray> m(q, opt.size(), opt.size());
 
-    //Matrix rep of the board.
-    Matrix<IntVarArray> m(q, opt.size(), opt.size());
-      
-    // n is the total number of queens (count)
-    count(*this, q, 1, IRT_EQ, n);
+        // n is the total number of queens (count)
+        count(*this, q, 1, IRT_EQ, n);
 
-    //There must only be one queen per row.
-    for (int i = 0; i < n; i++) {
-      count(*this, m.row(i), 1, IRT_EQ, 1);
-    }
-    //There must be only one queen per column.
-    for (int i = 0; i < n; i++) {
-      count(*this, m.col(i), 1, IRT_EQ, 1);
-    }
-    // There must be only one queen per diagonal.
-    IntVarArray diagonal(*this, n);
-    std::cout << "To the left side, going down the diagonals" << std::endl;
+        //There must only be one queen per row.
+        for (int i = 0; i < n; i++) {
+            count(*this, m.row(i), 1, IRT_EQ, 1);
+        }
+        
+        //There must be only one queen per column.
+        for (int i = 0; i < n; i++) {
+            count(*this, m.col(i), 1, IRT_EQ, 1);
+        }
+        
+        // There must be only one queen per diagonal.
+        IntVarArray diagonal(*this, n);
 
+        std::cout << "To the left side, going down the diagonals" << std::endl;
         for (int i = 0; i < n; i++) {
             std::cout << "New diagonal" << std::endl;
 
@@ -106,8 +107,8 @@ public:
         // Branching over the matrix.
         branch(*this, q, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
   }
-  // Constructor used in cloning
-    Queens(bool share, Queens& s) : Script(share,s) {
+    // Constructor used for cloning \a s
+    Queens(bool share, Queens& s) : Script(share,s), n(s.n) {
         q.update(*this, share, s.q);
     }
 
