@@ -1,7 +1,7 @@
 queens.cpp
-queens.cpp(110): error C2661: 'Gecode::Driver::ScriptBase<Gecode::Driver::IgnoreStepOption<Gecode::Space>>::ScriptBase': no overloaded function takes 2 arguments
-queens.cpp(111): error C2660: 'Gecode::VarArray<Gecode::IntVar>::update': function does not take 3 arguments
-queens.cpp(116): error C2259: 'Queens': cannot instantiate abstract class
-queens.cpp(116): note: due to following members:
-queens.cpp(116): note: 'Gecode::Space *Gecode::Space::copy(void)': is abstract
+queens.cpp(111): error C2661: 'Gecode::Driver::ScriptBase<Gecode::Driver::IgnoreStepOption<Gecode::Space>>::ScriptBase': no overloaded function takes 2 arguments
+queens.cpp(112): error C2660: 'Gecode::VarArray<Gecode::IntVar>::update': function does not take 3 arguments
+queens.cpp(117): error C2259: 'Queens': cannot instantiate abstract class
+queens.cpp(117): note: due to following members:
+queens.cpp(117): note: 'Gecode::Space *Gecode::Space::copy(void)': is abstract
 C:\Program Files\Gecode\\include\gecode/kernel/core.hpp(1944): note: see declaration of 'Gecode::Space::copy'
