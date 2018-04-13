@@ -1,3 +1,10 @@
+//
+//  queens.cpp
+//  id2204-Assignment1
+//
+//  Created by Vaikunth Srinivasan A on 12/04/18.
+//  Copyright (c) 2018 Vaikunth Srinivasan A. All rights reserved.
+//  Inspired by the n-queens example by Christian Schulte from the Gecode example programs.
 
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
@@ -5,137 +12,90 @@
 
 using namespace Gecode;
 
-class Queens: public Script {
+/**
+ * Place n queens on an n times n chessboard such that they do not
+ * attack each other.
+ */
+class Queens : public Script {
+private:
+    // Position of queens on boards
+    const int n;
+    BoolVarArray board;
 public:
-    //The postion of the queens on the boards
-    IntVarArray q;
-    int n;
-    //n x n with allowed values 0 & 1
-    Queens(const SizeOptions& opt) : Script(opt), q(*this, opt.size() * opt.size(), 0, 1) {
-        n = opt.size();
+    /// The actual problem
+    Queens(const SizeOptions& opt)
+    : Script(opt), n(opt.size()), board(*this, opt.size() * opt.size(), 0, 1) {
+        // Create a matrix representing the board
+        Matrix<BoolVarArgs> matrix(board, n);
+        // There must be only one queen per row
+        for (int i = 0; i < n; i++)
+            linear(*this, matrix.row(i), IRT_EQ, 1, opt.ipl());
+        // There must be only one queen per column
+        for (int i = 0; i < n; i++)
+            linear(*this, matrix.col(i), IRT_EQ, 1, opt.ipl());
         
-        //Matrix rep of the board.
-        Matrix<IntVarArray> m(q, opt.size(), opt.size());
+        // There must be only one queen per diagonal
+        // Only the bottom left and right have to be checked as the top left and right have already been checked in a previous iteration.
 
-        // n is the total number of queens (count)
-        count(*this, q, 1, IRT_EQ, n);
-
-        //There must only be one queen per row.
-        for (int i = 0; i < n; i++) {
-            count(*this, m.row(i), 1, IRT_EQ, 1);
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                BoolVarArgs d1;
+                BoolVarArgs d2;
+                
+                int xx = x, yy = y;
+                // Checking the bottom right
+                while (xx < n && yy < n)
+                    d1 << matrix(xx++, yy++);
+                linear(*this, d1, IRT_LQ, 1, opt.ipl());
+                
+                xx = x, yy = y;
+                // Checking the bottom left
+                while (xx  >= 0 && yy < n)
+                    d2 << matrix(xx--, yy++);
+                linear(*this, d2, IRT_LQ, 1, opt.ipl());
+            }
         }
         
-        //There must be only one queen per column.
-        for (int i = 0; i < n; i++) {
-            count(*this, m.col(i), 1, IRT_EQ, 1);
-        }
-        
-        // There must be only one queen per diagonal.
-        IntVarArray diagonal(*this, n);
-
-        std::cout << "To the left side, going down the diagonals" << std::endl;
-        for (int i = 0; i < n; i++) {
-            std::cout << "New diagonal" << std::endl;
-
-            //Set the whole diagonal array to 0s.
-            for (int k = 0; k < n; k++) {
-                diagonal[k] = IntVar(*this, 0, 0);
-            }
-
-            for (int j = 0; j < n - i; j++) {
-                std::cout << "(" << i + j << "," << j << ")" << std::endl;
-                diagonal[j] = m(i + j, j);
-            }
-
-            count(*this, diagonal, 1, IRT_LQ, 1);
-        }
-
-        std::cout << "To the left side, going up the diagonals" << std::endl;
-
-        for (int i = 0; i < n; i++) {
-            std::cout << "New diagonal" << std::endl;
-
-            //Set the whole diagonal array to 0s.
-            for (int k = 0; k < n; k++) {
-                diagonal[k] = IntVar(*this, 0, 0);
-            }
-
-            for (int j = 0; j <= i; j++) {
-                std::cout << "(" << i - j << "," << j << ")" << std::endl;
-                diagonal[j] = m(i - j, j);
-            }
-
-            count(*this, diagonal, 1, IRT_LQ, 1);
-        }
-
-        std::cout << "To the right side, going down the diagonals" << std::endl;
-
-        for (int i = 0; i < n; i++) {
-            std::cout << "New diagonal" << std::endl;
-
-            //Set whole the diagonal array to 0s.
-            for (int k = 0; k < n; k++) {
-                diagonal[k] = IntVar(*this, 0, 0);
-            }
-
-            for (int j = (n - 1); j >= i; j--) {
-                std::cout << "(" << (n - 1) + i - j << "," << j << ")" << std::endl;
-                diagonal[j] = m((n - 1) + i - j, j);
-            }
-
-            count(*this, diagonal, 1, IRT_LQ, 1);
-        }
-
-        std::cout << "To the right side, going up the diagonals" << std::endl;
-        //Diagonals, right side, going up
-        for (int i = 0; i < n; i++) {
-            std::cout << "New diagonal" << std::endl;
-
-            //Set the whole diagonal array to 0s.
-            for (int k = 0; k < n; k++) {
-                diagonal[k] = IntVar(*this, 0, 0);
-            }
-
-            for (int j = (n - 1) - i; j < n; j++) {
-                std::cout << "(" << i + j - (n - 1) << "," << j << ")" << std::endl;
-                diagonal[j] = m(i + j - (n - 1), j);
-            }
-
-            count(*this, diagonal, 1, IRT_LQ, 1);
-        }
-
-        // Branching over the matrix.
-        branch(*this, q, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-  }
-    // Constructor used for cloning \a s
-    Queens(bool share, Queens& s) : Script(share,s), n(s.n) {
-        q.update(*this, share, s.q);
+        // INT_VAL_MAX seems to be the best branching option, the number of nodes is reduced significantly. However, the execution time is increased largely.
+        // Random variable can be used in branching. It reduces the size of the search tree and the number of propogations, although the execution time is still large.
+        branch(*this, board, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
     }
-
-    // To perform copy during clone
-    virtual Space* copy(bool share) {
+    
+    // Constructor for cloning
+    Queens(bool share, Queens& s) : Script(share,s), n(s.n) {
+        board.update(*this, share, s.board);
+    }
+    
+    // Perform copying during cloning
+    virtual Space*
+    copy(bool share) {
         return new Queens(share,*this);
     }
-
-    // Solution printer
-    virtual void print(std::ostream& os) const {
-        std::cout << "" << std::endl << std::endl;
-
-        for (int i = 0; i < n * n; i++) {
-            if (i != 0 && i % n == 0) {
-                std::cout << std::endl;
-            }
-            std::cout << q[i] << " ";
+    
+    // Print solution
+    virtual void
+    print(std::ostream& os) const {
+        os << "\t";
+        for (int i = 0; i < board.size(); i++) {
+            os << board[i] << "\t";
+            if ((i+1) % n == 0)
+                os << std::endl << "\t";
         }
+        os << std::endl;
+    }
+};
 
-        std::cout << std::endl;
-      }
-  };
-  int main(int argc, char* argv[]) {
+/**
+ * Main function
+ */
+int
+main(int argc, char* argv[]) {
     SizeOptions opt("Queens");
-    opt.iterations(500);
-    opt.size(8); //Size parameter size of chess board.
-
+    opt.iterations(1);
+    // Default problem size
+    opt.size(5);
+    opt.solutions(1);
+    
     opt.parse(argc,argv);
     Script::run<Queens,DFS,SizeOptions>(opt);
     return 0;
