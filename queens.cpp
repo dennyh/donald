@@ -13,8 +13,8 @@
 using namespace Gecode;
 
 /**
- * Place n queens on an n times n chessboard such that they do not
- * attack each other.
+ * n-queens are placed on chessboard of n x n dimensions such that they don't attack each other.
+ * 
  */
 class Queens : public Script {
 private:
@@ -58,6 +58,7 @@ public:
         
         // INT_VAL_MAX seems to be the best branching option, the number of nodes is reduced significantly. However, the execution time is increased largely.
         // Random variable can be used in branching. It reduces the size of the search tree and the number of propogations, although the execution time is still large.
+        // i.e., branch(*this, q, INT_VAR_RND(rand()), INT_VAL_MAX());
         branch(*this, board, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
     }
     
